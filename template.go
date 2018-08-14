@@ -7,8 +7,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 )
+
+const messageIdPrefix = "message-id: "
 
 // Template is a type for encapsulating all the parsed files, messages, fields, enums, services, extensions, etc. into
 // an object that will be supplied to a go template.
@@ -128,6 +131,7 @@ type Message struct {
 	LongName    string `json:"longName"`
 	FullName    string `json:"fullName"`
 	Description string `json:"description"`
+	MessageId   int    `json:"message_id"`
 
 	HasExtensions bool `json:"hasExtensions"`
 	HasFields     bool `json:"hasFields"`
@@ -264,6 +268,8 @@ func parseMessage(pm *protokit.Descriptor) *Message {
 		Extensions:    make([]*MessageExtension, 0, len(pm.Extensions)),
 		Fields:        make([]*MessageField, 0, len(pm.Fields)),
 	}
+	// set message id field if available
+	msg.MessageId, msg.Description = messageId(msg.Description)
 
 	for _, ext := range pm.Extensions {
 		msg.Extensions = append(msg.Extensions, parseMessageExtension(ext))
@@ -378,6 +384,26 @@ func description(comment string) string {
 	}
 
 	return val
+}
+
+// messageId returns the message id or -1 if no id tag can be found. It also returns the changed description value.
+func messageId(description string) (int, string) {
+	if !strings.HasPrefix(description, messageIdPrefix) {
+		return -1, description
+	}
+	var index int
+	carriageReturnIndex := strings.Index(description, "\n")
+	endIndex := strings.LastIndexAny(description[len(messageIdPrefix):carriageReturnIndex], "0123456789")
+	if endIndex == -1 {
+		panic(fmt.Errorf("no id number provided after %s prefix", strconv.Quote(messageIdPrefix)))
+	} else {
+		index = len(messageIdPrefix) + 1 + endIndex
+	}
+	messageId, err := strconv.Atoi(description[len(messageIdPrefix):index])
+	if err != nil {
+		panic(err)
+	}
+	return messageId, description[carriageReturnIndex:]
 }
 
 type orderedEnums []*Enum

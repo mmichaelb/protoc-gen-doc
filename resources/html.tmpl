@@ -139,6 +139,11 @@
         text-align: right;
         display: table-cell;
       }
+      .message-id {
+        background-color: #dcdcdc;
+        border-radius: 3px;
+        padding: 2px;
+      }
 
       /* The 'M', 'E' and 'X' badges in the ToC */
       .badge {
@@ -179,7 +184,11 @@
             <ul>
               {{range .Messages}}
                 <li>
-                  <a href="#{{.FullName}}"><span class="badge">M</span>{{.LongName}}</a>
+                  <a href="#{{.FullName}}"><span class="badge">M</span>{{.LongName}}
+                    {{if ne .MessageId -1 }}
+                      <span class="message-id" title="ID of message">{{.MessageId}}</span>
+                    {{end}}
+                  </a>
                 </li>
               {{end}}
               {{range .Enums}}
@@ -212,7 +221,12 @@
       {{p .Description}}
 
       {{range .Messages}}
-        <h3 id="{{.FullName}}">{{.LongName}}</h3>
+        <h3 id="{{.FullName}}">
+          {{.LongName}}
+          {{if ne .MessageId -1 }}
+            <span class="message-id" title="ID of message">{{.MessageId}}</span>
+          {{end}}
+        </h3>
         {{p .Description}}
 
         {{if .HasFields}}
