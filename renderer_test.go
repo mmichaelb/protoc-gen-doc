@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/pseudomuto/protoc-gen-doc"
+	"github.com/mmichaelb/protoc-gen-doc"
 )
 
 const tempTestDir = "./tmp"

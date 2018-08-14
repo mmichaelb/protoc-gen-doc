@@ -13,7 +13,7 @@ env:
 
 cache:
   - "${HOME}/protoc"
-  - "${HOME}/gopath/src/github.com/pseudomuto/protoc-gen-doc/vendor"
+  - "${HOME}/gopath/src/github.com/mmichaelb/protoc-gen-doc/vendor"
 
 go:
   - 1.10.x
@@ -31,14 +31,6 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-
-deploy:
-  provider: script
-  script: script/push_to_docker.sh
-  skip_cleanup: true
-  on:
-    tags: true
-    all_branches: true
 
 notifications:
   email: false

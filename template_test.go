@@ -7,7 +7,7 @@ import (
 
 	"testing"
 
-	"github.com/pseudomuto/protoc-gen-doc"
+	"github.com/mmichaelb/protoc-gen-doc"
 )
 
 var (
